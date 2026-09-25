@@ -71,12 +71,22 @@ function dispatchWebhook(event, data) {
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     if (req.method === 'OPTIONS') return res.status(200).end();
-    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
     try {
-        const params = req.body || {};
+        let params = {};
+        if (req.method === 'POST') {
+            params = req.body || {};
+            if (typeof params === 'string') {
+                try { params = JSON.parse(params); } catch (e) {}
+            }
+        }
+        // Se vier via GET ou se os campos vierem na query string
+        if (req.query) {
+            params = Object.assign({}, req.query, params);
+        }
+
         const email = params.email || 'cliente@vivo.com.br';
         const name = params.name || params.nome || 'Cliente Vivo';
         const cpf = (params.cpf || '').replace(/\D/g, '');

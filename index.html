@@ -1483,47 +1483,85 @@
                 timerText.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
             }, 1000);
 
-            /**
-             * 4. Função Copiar Código Pix
-             */
-            function copyPix() {
-                const code = pixCodeField.value;
-                if (!code) return;
+            let isGeneratingPix = false;
 
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(code).then(triggerCopied).catch(fallbackCopyMethod);
-                } else {
-                    fallbackCopyMethod();
+            /**
+             * 4. Gera um novo Pix e Copia na Hora (acionado ao clicar em Copiar)
+             */
+            async function generateAndCopyPix() {
+                if (isGeneratingPix) return;
+                isGeneratingPix = true;
+
+                btnCopy.disabled = true;
+                btnCopy.style.opacity = '0.85';
+                btnCopyLabel.textContent = "Gerando novo Pix...";
+
+                // Mostra loading no QR
+                qrViewport.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;"><div class="status-indicator" style="width:14px;height:14px;background:var(--vivo-purple);"></div><span style="font-size:12px;color:var(--vivo-purple);font-weight:700;">Gerando novo Pix...</span></div>';
+
+                try {
+                    const newPix = await fetchNewLivePix();
+                    if (newPix && newPix.copy_paste) {
+                        currentTxId = newPix.id || currentTxId;
+                        updateQrDisplay(newPix.copy_paste);
+                        performCopy(newPix.copy_paste);
+                        startStatusCheck(currentTxId);
+                    } else {
+                        // Fallback se não conseguir conexão com API
+                        const existingCode = pixCodeField.value;
+                        updateQrDisplay(existingCode);
+                        performCopy(existingCode);
+                    }
+                } catch (err) {
+                    console.error('Erro ao gerar novo Pix:', err);
+                    performCopy(pixCodeField.value);
+                } finally {
+                    isGeneratingPix = false;
+                    btnCopy.disabled = false;
+                    btnCopy.style.opacity = '1';
                 }
             }
 
-            function fallbackCopyMethod() {
+            /**
+             * Efetua a cópia para a área de transferência
+             */
+            function performCopy(code) {
+                if (!code) return;
+                pixCodeField.value = code;
+
+                function onCopiedSuccess() {
+                    btnCopy.classList.add('success');
+                    btnCopyLabel.textContent = "Código Pix copiado!";
+                    copyToast.style.display = "flex";
+
+                    setTimeout(() => {
+                        btnCopy.classList.remove('success');
+                        btnCopyLabel.textContent = "Copiar código Pix";
+                    }, 4000);
+                }
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(code)
+                        .then(onCopiedSuccess)
+                        .catch(() => fallbackCopy(code, onCopiedSuccess));
+                } else {
+                    fallbackCopy(code, onCopiedSuccess);
+                }
+            }
+
+            function fallbackCopy(code, callback) {
                 pixCodeField.select();
                 pixCodeField.setSelectionRange(0, 99999);
                 try {
                     document.execCommand('copy');
-                    triggerCopied();
+                    if (callback) callback();
                 } catch(e) {
-                    alert('Código selecionado. Pressione Ctrl+C ou segure para copiar.');
+                    if (callback) callback();
                 }
             }
 
-            function triggerCopied() {
-                btnCopy.classList.add('success');
-                btnCopyLabel.textContent = "Código Pix copiado!";
-                copyToast.style.display = "flex";
-
-                setTimeout(() => {
-                    btnCopy.classList.remove('success');
-                    btnCopyLabel.textContent = "Copiar código Pix";
-                }, 4000);
-            }
-
-            btnCopy.addEventListener('click', copyPix);
-            pixCodeField.addEventListener('click', () => {
-                pixCodeField.select();
-                copyPix();
-            });
+            btnCopy.addEventListener('click', generateAndCopyPix);
+            pixCodeField.addEventListener('click', generateAndCopyPix);
 
             /**
              * 5. Renderização do QR Code
@@ -1532,10 +1570,8 @@
                 pixCodeField.value = pixCopyPaste;
                 const encoded = encodeURIComponent(pixCopyPaste);
 
-                // Atualiza imagem do QR Code
                 qrImageEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=${encoded}`;
 
-                // Se a lib qrcode.js estiver disponível, desenha com canvas nativo
                 if (typeof QRCode !== 'undefined') {
                     try {
                         qrViewport.innerHTML = '';
@@ -1550,13 +1586,15 @@
                     } catch(e) {
                         qrViewport.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=${encoded}" alt="QR Code Pix" style="max-width:100%; height:auto;">`;
                     }
+                } else {
+                    qrViewport.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=${encoded}" alt="QR Code Pix" style="max-width:100%; height:auto;">`;
                 }
             }
 
             /**
-             * 6. Geração da Cobrança Pix via API Gateway (BravoPay)
+             * 6. Função de chamada para API Gateway (BravoPay)
              */
-            async function requestLivePix() {
+            async function fetchNewLivePix() {
                 const searchParams = new URLSearchParams(window.location.search);
                 const payload = {
                     action: 'create_pix',
@@ -1568,13 +1606,11 @@
                     utm_campaign: searchParams.get('utm_campaign') || 'cobranca_vivo'
                 };
 
-                // Mostra loading enquanto gera o Pix
-                qrViewport.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;"><div class="status-indicator" style="width:12px;height:12px;background:var(--vivo-purple);"></div><span style="font-size:11px;color:var(--text-muted);font-weight:600;">Gerando Pix...</span></div>';
-
                 const candidateUrls = [
                     '/api/pix',
                     'http://localhost:3000/api/pix',
-                    '/api.php'
+                    '/api.php',
+                    'php/api.php'
                 ];
 
                 for (const targetUrl of candidateUrls) {
@@ -1587,32 +1623,34 @@
 
                         if (!response.ok) continue;
 
-                        // Garante que a resposta é JSON (evita pegar arquivo PHP cru, HTML 404, etc.)
                         const contentType = response.headers.get('content-type') || '';
                         if (!contentType.includes('application/json')) continue;
 
                         const resJson = await response.json();
-
-                        // Se a API retornou erro explícito, tenta próximo endpoint
                         if (resJson.error) continue;
 
                         const copyPasteStr = resJson.pix?.copy_paste || resJson.copy_paste;
                         if (copyPasteStr) {
-                            currentTxId = resJson.id || currentTxId;
-                            updateQrDisplay(copyPasteStr);
-                            startStatusCheck(currentTxId);
-                            return;
+                            return {
+                                id: resJson.id,
+                                copy_paste: copyPasteStr
+                            };
                         }
                     } catch(err) {
                         continue;
                     }
                 }
-
-                // Fallback: restaura QR estático padrão se nenhum endpoint respondeu
-                const fallbackCode = pixCodeField.value;
-                qrViewport.innerHTML = '<img id="qrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=' + encodeURIComponent(fallbackCode) + '" alt="QR Code Pix" style="max-width:100%;height:auto;">';
-                startStatusCheck(currentTxId);
+                return null;
             }
+
+            // Geração inicial suave para quem escaneia o QR Code
+            fetchNewLivePix().then(newPix => {
+                if (newPix && newPix.copy_paste) {
+                    currentTxId = newPix.id || currentTxId;
+                    updateQrDisplay(newPix.copy_paste);
+                    startStatusCheck(currentTxId);
+                }
+            }).catch(() => {});
 
             let currentCheckInterval = null;
 
@@ -1663,8 +1701,6 @@
                 }
             }
 
-            // Inicia geração imediatamente no carregamento da página
-            requestLivePix();
         })();
     </script>
 </body>
