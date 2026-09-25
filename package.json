@@ -1,0 +1,9 @@
+{
+  "name": "vivo-2via",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vivo 2ª Via de Fatura com Pix via BravoPay",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

